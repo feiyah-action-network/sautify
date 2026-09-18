@@ -70,9 +70,9 @@
    */
   function handleDonationSubmit(amount) {
     window.alert(
-      'Thank you. Online card payments are not live yet, so your $' +
+      'Thank you. Card checkout is not live on this page yet, so your $' +
         amount +
-        ' gift cannot be processed on this page today. Please use the contact form and we will get in touch about ways to give.'
+        ' gift cannot be processed here today. Please write to info@feiyahactionnetwork.org and FAN will send M-Pesa details or another way to give.'
     );
   }
 
