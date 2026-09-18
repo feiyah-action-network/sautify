@@ -7,7 +7,9 @@
     "dev": "vite",
     "demo": "npm --prefix demo-app run demo",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "node --test \"test/*.test.js\"",
+    "test:pipeline": "node listener-spike/src/demo.js"
   },
   "dependencies": {
     "@netlify/blobs": "^10.7.9",

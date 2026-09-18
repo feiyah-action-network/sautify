@@ -1,4 +1,4 @@
-export const CONTACT_EMAIL = 'hamed.nalle@sautify.com'
+export const CONTACT_EMAIL = 'hamed.nalle@sautify.co.ke'
 
 export function mailto(subject) {
   return `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}`

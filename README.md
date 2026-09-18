@@ -1,5 +1,7 @@
 # Sautify — Marketing Website
 
+[![CI](https://github.com/feiyahactionnetwork/sautify/actions/workflows/ci.yml/badge.svg)](https://github.com/feiyahactionnetwork/sautify/actions/workflows/ci.yml)
+
 Kenya's independent compliance-data layer for music royalties — verified play-log evidence for licensed CMOs. This repo is the public marketing site: React + Vite + Tailwind CSS, all calls-to-action use `mailto:` links.
 
 ## Run locally

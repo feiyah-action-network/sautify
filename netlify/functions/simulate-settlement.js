@@ -58,6 +58,13 @@ export const handler = async (event) => {
     const adminAmountKes = Math.round((invoiceAmountKes - artistAmountKes) * 100) / 100
     const cmoDisbursementRef = `DEMO-CMO-${id}-${Date.now()}`
 
+    // The earlier settlement_status check above is only a fast-path error
+    // message; it does not by itself prevent two concurrent requests from
+    // both passing it before either writes. The actual guard against a
+    // double-settle is the .neq() below: it makes the update conditional on
+    // the row still being unsettled AT WRITE TIME, so if another request
+    // settled it in between, this UPDATE matches zero rows instead of
+    // silently overwriting that settlement.
     const { data: updated, error: updateError } = await supabase
       .from('ledger_entries')
       .update({
@@ -69,11 +76,15 @@ export const handler = async (event) => {
         settled_at: new Date().toISOString(),
       })
       .eq('id', id)
+      .neq('settlement_status', 'settled')
       .select('*')
-      .single()
+      .maybeSingle()
 
     if (updateError) {
       return json(500, { error: updateError.message })
+    }
+    if (!updated) {
+      return json(409, { error: `Ledger entry ${id} is already settled` })
     }
 
     return json(200, formatEntry(updated))
