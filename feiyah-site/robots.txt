@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /thanks.html
 
-Sitemap: https://www.feiyahactionnetwork.org/sitemap.xml
+Sitemap: https://feiyahactionnetwork.org/sitemap.xml

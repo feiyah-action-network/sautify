@@ -39,9 +39,11 @@ Two details on the banner are worth a second look before launch:
 
 - The banner says FAN was **founded in 2008 and registered in 2010**, while the
   current website says founded 2010. This site uses the banner's version.
-- The banner names **UNFPA and ActionAid** as partners, plus a third logo that
-  is too small to read in the photograph. If that third partner is Samburu
-  Women Trust, add it to the partners section.
+- The banner names **UNFPA and ActionAid** as partners, plus a third logo too
+  small to read in the photograph. FAN has since confirmed that **Samburu Women
+  Trust** is a partner, working with FAN across girls' education, community land
+  rights, gender justice and protection, and joint advocacy and training. It is
+  listed separately from the Komesha FGM Sasa partners for that reason.
 
 ## Before launch: still to supply
 
@@ -75,6 +77,41 @@ use Netlify Forms attributes; only the newsletter and contact forms use
 FAN already takes M-Pesa and is setting up PayPal. The paybill and account
 numbers are blank on the current site, so this page points donors to
 info@feiyahactionnetwork.org instead of showing incomplete payment details.
+
+## Search indexing
+
+Checked against the live site on 2026-09-22. `site:feiyahactionnetwork.org`
+returns **no pages at all**. The only FAN website Google still holds is the old
+`feiyahactionnetwork.com`, which no longer has a DNS record and returns 502.
+So the domain people can reach is invisible, and the domain Google shows is dead.
+
+What the live .org site gets right: server rendered HTML (not a JS only shell),
+a unique title and meta description per page, a self referencing canonical on
+the apex domain, Open Graph tags, one JSON-LD block, a real `<h1>`, and no
+`noindex` anywhere. The pages are perfectly crawlable. Google simply has never
+been told they exist.
+
+What is missing on the live site:
+
+1. **No `/robots.txt`** (404). Not fatal on its own, but it is where the sitemap
+   gets declared.
+2. **No `/sitemap.xml`** (404). This is the main discovery gap.
+3. **No Google Search Console property**, as far as can be told from outside.
+   Verifying the domain and submitting the sitemap is the single highest impact
+   action, and it is the only way to use URL Inspection to request indexing.
+4. **No redirect from the old .com**, which is now impossible through DNS alone
+   because the .com no longer resolves. If FAN still controls the registration,
+   pointing it at Netlify and 301ing every path to the .org recovers the old
+   index history and any inbound links. If the registration has lapsed, that
+   history is gone and the .org has to be built up fresh.
+5. **Few inbound links.** FAN's Facebook and Instagram profiles and the
+   Laisamis Climate site are all indexed. Each should link to
+   `https://feiyahactionnetwork.org/` so crawlers have a path in.
+
+Note on the canonical host: the live site 301s `www.feiyahactionnetwork.org` to
+the bare `feiyahactionnetwork.org`. Every canonical, `og:url`, sitemap entry,
+and robots.txt line in this build uses the bare apex to match. Do not
+reintroduce `www.`, or the canonicals will point at URLs that redirect.
 
 ## Copy conventions
 
