@@ -44,6 +44,21 @@
   to = "/.netlify/functions/catalog-match"
   status = 200
 
+# Sautify Awards live in their own Netlify project (sautify-awards) so an awards
+# deploy can never break these pages. Serve them at sautify.co.ke/awards.
+# Must stay ABOVE the "/*" catch-all below.
+[[redirects]]
+  from = "/awards"
+  to = "https://sautify-awards.netlify.app/awards/"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/awards/*"
+  to = "https://sautify-awards.netlify.app/awards/:splat"
+  status = 200
+  force = true
+
 [[redirects]]
   from = "/*"
   to = "/index.html"

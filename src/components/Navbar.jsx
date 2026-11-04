@@ -8,6 +8,7 @@ const links = [
   { label: 'For Artists', href: '#for-artists' },
   { label: 'Transparency Ledger', href: '#ledger' },
   { label: 'About', href: '#about' },
+  { label: 'Awards', href: '/awards' },
 ]
 
 export default function Navbar() {
@@ -56,7 +57,7 @@ export default function Navbar() {
 
       <div
         className={`md:hidden overflow-hidden border-t border-line bg-ink transition-all duration-300 ease-out ${
-          open ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+          open ? 'max-h-[30rem] opacity-100' : 'max-h-0 opacity-0'
         }`}
       >
         <div className="px-6 py-4 flex flex-col gap-1">
