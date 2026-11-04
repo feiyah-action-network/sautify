@@ -245,27 +245,34 @@ language sql stable security definer set search_path = '' as $$
     from public.categories c where c.id = p_category;
 $$;
 
+-- Public boards show RANK ONLY (decision 2026-11-04: hide exact numbers so jurors
+-- and the public cannot see tallies). Rank is null until a nominee has paid votes.
+create or replace function private.category_ranks(p_category text)
+returns table(nominee_id uuid, rnk integer)
+language sql stable set search_path = '' as $$
+  with t as (
+    select n.id, coalesce(sum(o.votes_counted) filter (where o.counted), 0) as v
+      from public.nominees n left join public.vote_orders o on o.nominee_id = n.id
+     where n.category_id = p_category and n.active group by n.id)
+  select t.id, case when t.v > 0 then (dense_rank() over (order by t.v desc))::int end from t;
+$$;
+
 drop function if exists public.get_board(text);
 create function public.get_board(p_category text)
-returns table(nominee_id uuid, slug text, name text, location text, photo_url text, votes bigint)
+returns table(nominee_id uuid, slug text, name text, location text, photo_url text, rank integer)
 language sql stable security definer set search_path = '' as $$
-  select n.id, n.slug, n.name, n.location, n.photo_url,
-         coalesce(sum(o.votes_counted) filter (where o.counted), 0)::bigint as votes
-    from public.nominees n
-    left join public.vote_orders o on o.nominee_id = n.id
-   where n.category_id = p_category and n.active
-   group by n.id
-   order by votes desc, n.sort, n.name;
+  select n.id, n.slug, n.name, n.location, n.photo_url, r.rnk
+    from public.nominees n join private.category_ranks(p_category) r on r.nominee_id = n.id
+   order by r.rnk nulls last, n.sort, n.name;
 $$;
 
 create or replace function public.get_nominee(p_slug text)
 returns table(nominee_id uuid, slug text, name text, location text, photo_url text, bio text,
-              category_id text, category_name text, status text, votes bigint, category_votes bigint)
+              category_id text, category_name text, status text, rank integer, nominee_count integer)
 language sql stable security definer set search_path = '' as $$
   select n.id, n.slug, n.name, n.location, n.photo_url, n.bio, c.id, c.name, private.category_status(c),
-         (select coalesce(sum(o.votes_counted), 0) from public.vote_orders o where o.nominee_id = n.id and o.counted)::bigint,
-         (select coalesce(sum(o.votes_counted), 0) from public.vote_orders o
-            join public.nominees n2 on n2.id = o.nominee_id where n2.category_id = c.id and o.counted)::bigint
+         (select r.rnk from private.category_ranks(c.id) r where r.nominee_id = n.id),
+         (select count(*)::int from public.nominees x where x.category_id = c.id and x.active)
     from public.nominees n join public.categories c on c.id = n.category_id
    where n.slug = p_slug and n.active;
 $$;

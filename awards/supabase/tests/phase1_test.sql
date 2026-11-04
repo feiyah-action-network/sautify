@@ -49,8 +49,13 @@ begin
   -- 7. Idempotent: settling again never adds votes
   select * into r from public.settle_invoice(s, 'INV-T6', 'COMPLETE', 1000, 'REF', null, o.order_id::text);
   if r.votes_counted <> 3 then raise exception 'T7 FAIL'; end if;
-  select votes into n from public.get_board('breakthrough-act') where nominee_id = nom;
-  if n < 3 then raise exception 'T7 FAIL board'; end if;
+  select sum(votes_counted) into n from public.vote_orders where nominee_id = nom and counted;
+  if n < 3 then raise exception 'T7 FAIL tally'; end if;
+  -- Public board shows rank only; the voted nominee is ranked 1, unvoted ones have no rank
+  select rank into n from public.get_board('breakthrough-act') where nominee_id = nom;
+  if n is distinct from 1 then raise exception 'T7 FAIL rank %', n; end if;
+  if exists (select 1 from public.get_board('breakthrough-act') where nominee_id <> nom and rank is not null)
+    then raise exception 'T7 FAIL unvoted ranked'; end if;
 
   -- 8. FAILED never counts, and a later FAILED cannot undo a COMPLETE
   select * into r from public.settle_invoice(s, 'INV-T6', 'FAILED', 0, null, 'late', null);
