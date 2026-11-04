@@ -1,0 +1,21 @@
+# Sautify Awards: its own Netlify project (sautify-awards), base directory "awards".
+# Everything is served under /awards so sautify.co.ke can proxy /awards/* here.
+[build]
+  publish = "public"
+  command = "echo 'no build step'"
+  # Only build when the awards folder changed.
+  ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF -- ."
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+[[redirects]]
+  from = "/"
+  to = "/awards/"
+  status = 302
+
+[[headers]]
+  for = "/awards/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800, immutable"

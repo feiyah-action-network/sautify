@@ -1,0 +1,6 @@
+{
+  "name": "sautify-awards",
+  "private": true,
+  "type": "module",
+  "scripts": { "test": "node --test --experimental-strip-types --no-warnings tests/unit.test.mts tests/render.test.mts" }
+}
