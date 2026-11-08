@@ -64,7 +64,20 @@
   status = 200
   force = true
 
+# Old/guessable address for the platform page.
 [[redirects]]
-  from = "/*"
+  from = "/about"
+  to = "/platform"
+  status = 301
+
+# The platform page is this project's React app. Only /platform serves it; any
+# other unknown address gets the branded 404 page (public/404.html).
+[[redirects]]
+  from = "/platform"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/platform/*"
   to = "/index.html"
   status = 200
