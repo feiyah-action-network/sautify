@@ -1,7 +1,7 @@
 import type { Config } from "@netlify/functions";
 import { rpc } from "./_lib/db.mts";
 import { BASE } from "./_lib/env.mts";
-import { chip, esc, fmtEAT, html, kes, page, photo, TROPHY, url } from "./_lib/layout.mts";
+import { ASSET_V, chip, esc, fmtEAT, html, kes, page, photo, url } from "./_lib/layout.mts";
 import { faqBody, privacyBody, rulesBody, termsBody } from "./_lib/content.mts";
 
 type Site = { vote_price: number; test_mode: boolean };
@@ -27,19 +27,19 @@ async function home(s: Site) {
     title: "Sautify Awards | Piga kura for Kenyan creators",
     description: "Celebrating Kenyan music and creative talent. Vote for your favourite nominees by M-Pesa.",
     path: "/", testMode: s.test_mode, nav: "home",
-    body: `<div class="stage"><div class="wrap hero">
+    body: `<div class="stage navy"><div class="wrap hero">
 <div><p class="kicker">SAUTIFY AWARDS 2027</p><h1>Sauti yako ni kura yako.</h1>
 <p class="lede">Celebrating the artists, DJs, MCs, creators and venues behind Kenyan culture. Find your favourite and piga kura by M-Pesa.</p>
 <div class="cta"><a class="btn gold" href="${BASE}/categories">Piga kura</a><a class="btn" href="${BASE}/rules">How winners are chosen</a></div></div>
-<div class="trophy">${TROPHY}</div></div></div>
-<section><div class="wrap"><h2>Voting open now</h2><p class="lead">Each vote costs ${kes(s.vote_price)}. Votes only count once M-Pesa confirms the payment.</p>${openList}
-<p style="margin-top:22px"><a class="btn ink" href="${BASE}/categories">All ${cats.length} categories</a></p></div></section>
-<section><div class="wrap"><h2>How winners are chosen</h2>
+<div class="trophy"><img class="lockup" src="${BASE}/assets/logo.webp?v=${ASSET_V}" alt="Sautify Awards" width="600" height="564" fetchpriority="high" decoding="async"></div></div></div>
+<section><div class="wrap duo"><div><h2>Voting open now</h2><p class="lead">Each vote costs ${kes(s.vote_price)}. Votes only count once M-Pesa confirms the payment.</p>${openList}
+<p style="margin-top:22px"><a class="btn ink" href="${BASE}/categories">All ${cats.length} categories</a></p></div><div class="photo" role="img" aria-label="Award trophies lined up on a table"></div></div></section>
+<section class="band green"><div class="wrap"><h2>How winners are chosen</h2>
 <p class="lead">In public-vote categories, the jury and the fans both have a say. Leadership categories and Lifetime Achievement are decided by the jury alone.</p>
 <div class="split" aria-hidden="true"><div class="j"></div><div class="f"></div></div>
 <div class="split-l"><div><b>60%</b><span>Jury score</span></div><div><b>40%</b><span>Public vote</span></div></div>
 <p style="margin-top:20px"><a href="${BASE}/rules">Read the full rules</a></p></div></section>
-<section><div class="wrap"><h2>Jisajili as a creator</h2><p class="lead">Creator registration opens soon. Every nominee is checked by our team before appearing on the site.</p></div></section>`,
+<section class="band marble"><div class="wrap"><h2>Jisajili as a creator</h2><p class="lead">Creator registration opens soon. Every nominee is checked by our team before appearing on the site.</p></div></section>`,
   }));
 }
 
@@ -139,7 +139,7 @@ export default async (req: Request) => {
   try { s = await site(); }
   catch (e) {
     console.error("db down", e);
-    return html(`<!doctype html><meta name=viewport content="width=device-width"><title>Sautify Awards</title><body style="font-family:sans-serif;padding:24px;background:#140B07;color:#F3E7D3"><h1>Tutarudi punde.</h1><p>The awards site is busy. Please try again in a minute.</p>`, 503, 0);
+    return html(`<!doctype html><meta name=viewport content="width=device-width"><title>Sautify Awards</title><body style="font-family:sans-serif;padding:24px;background:#070D22;color:#F2EEE3"><h1>Tutarudi punde.</h1><p>The awards site is busy. Please try again in a minute.</p>`, 503, 0);
   }
   try {
     if (rel === "/") return await home(s);
