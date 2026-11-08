@@ -33,7 +33,8 @@ export interface PageOpts {
 }
 
 export function page(o: PageOpts): string {
-  const canonical = url(o.path);
+  // The awards home page is also the homepage of sautify.co.ke, so its canonical address is "/".
+  const canonical = o.path === "/" ? `${SITE_ORIGIN}/` : url(o.path);
   const img = o.image || url("/assets/og.jpg");
   const cur = (k: string) => (o.nav === k ? ' aria-current="page"' : "");
   return `<!doctype html>
@@ -71,7 +72,7 @@ ${o.body}
 </main>
 <footer><div class="wrap">
 <p class="name">SAUTIFY</p>
-<nav aria-label="Footer"><a href="${BASE}/">Awards home</a><a href="${BASE}/categories">Categories</a><a href="${BASE}/rules">Rules</a><a href="${BASE}/faq">FAQ</a><a href="${BASE}/terms">Terms of voting</a><a href="${BASE}/privacy">Privacy notice</a><a href="/">sautify.co.ke</a></nav>
+<nav aria-label="Footer"><a href="${BASE}/">Awards home</a><a href="${BASE}/categories">Categories</a><a href="${BASE}/rules">Rules</a><a href="${BASE}/faq">FAQ</a><a href="${BASE}/terms">Terms of voting</a><a href="${BASE}/privacy">Privacy notice</a><a href="/platform">About Sautify</a></nav>
 <p>Sauti yako ni kura yako. Votes are paid by M-Pesa and only count once the payment is confirmed.</p>
 </div></footer>
 ${(o.scripts ?? []).map((s) => `<script src="${BASE}/assets/${s}?v=${ASSET_V}" defer></script>`).join("")}
