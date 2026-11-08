@@ -44,6 +44,11 @@
   to = "/.netlify/functions/catalog-match"
   status = 200
 
+# The homepage ("/") shows Sautify Awards. That is handled by the edge function in
+# netlify/edge-functions/home.js, which falls back to the platform page below if
+# Awards is ever unavailable. The compliance/royalty pitch lives at /platform
+# (served by the "/*" catch-all below, which is this project's own React app).
+#
 # Sautify Awards live in their own Netlify project (sautify-awards) so an awards
 # deploy can never break these pages. Serve them at sautify.co.ke/awards.
 # Must stay ABOVE the "/*" catch-all below.
