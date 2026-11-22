@@ -1,0 +1,16 @@
+# Site-wide security headers for the deployed platform site and its API.
+#
+# Netlify serves this file from the publish root (Vite copies public/ into dist/).
+# The home edge function (netlify/edge-functions/home.js) already sets a couple of
+# these on the Awards homepage response; this applies a consistent baseline to the
+# /platform page, the /api/* function responses, and every static asset.
+#
+# Deliberately no Content-Security-Policy yet: a correct CSP needs the app's real
+# origins (Google Fonts, Supabase, Netlify functions) enumerated and tested so it
+# doesn't silently break the page. Tracked as a follow-up.
+/*
+  X-Frame-Options: SAMEORIGIN
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(), microphone=(), camera=(), browsing-topics=()
+  Strict-Transport-Security: max-age=31536000
