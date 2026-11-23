@@ -1,16 +1,29 @@
-# Site-wide security headers for the deployed platform site and its API.
+# Security headers for the deployed platform site and its API.
 #
 # Netlify serves this file from the publish root (Vite copies public/ into dist/).
-# The home edge function (netlify/edge-functions/home.js) already sets a couple of
-# these on the Awards homepage response; this applies a consistent baseline to the
-# /platform page, the /api/* function responses, and every static asset.
+# The /* block is a safe baseline for every path, including the Awards homepage
+# ("/") and the proxied /awards/* pages.
 #
-# Deliberately no Content-Security-Policy yet: a correct CSP needs the app's real
-# origins (Google Fonts, Supabase, Netlify functions) enumerated and tested so it
-# doesn't silently break the page. Tracked as a follow-up.
+# The Content-Security-Policy is scoped to the /platform document only (this
+# project's React app). It is deliberately NOT applied to "/" or "/awards/*",
+# whose content is the separate Awards project with its own origins, so this CSP
+# can never break that site. If Netlify ever doesn't match the rewritten
+# /platform path, the only effect is no CSP there (no regression) — the policy is
+# never emitted on the Awards paths.
 /*
   X-Frame-Options: SAMEORIGIN
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: geolocation=(), microphone=(), camera=(), browsing-topics=()
   Strict-Transport-Security: max-age=31536000
+
+# CSP for the platform app. script-src is locked to 'self' (the built Vite bundle;
+# the inline ld+json block is data, not executed script). style-src allows
+# 'unsafe-inline' for React inline style attributes and the Google Fonts
+# stylesheet; fonts load from fonts.gstatic.com; fetch/XHR is same-origin (/api/*).
+# frame-ancestors 'self' supersedes X-Frame-Options on modern browsers.
+/platform
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; upgrade-insecure-requests
+
+/platform/*
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; upgrade-insecure-requests
